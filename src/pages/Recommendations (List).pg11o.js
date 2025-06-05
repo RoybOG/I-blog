@@ -25,28 +25,37 @@ function getRowsFromCollection(colNanme) {
 }
 
 
+let catagories_selected = new Map(); //chose a map over a normal object becuase its more optimized for frequent removal of keys
+let catagory_selected=null;
+
+function update_filter(){
+	$w('#RecommendationsDataset').setFilter(wixData.filter().eq('catagory',catagory_selected._id))
+}
 
 
 $w.onReady(function () {
 	//getRowsFromCollection('Recommendations');
 
 	
-	let catagories_selected = new Map(); //chose a map over a normal object becuase its more optimized for frequent removal of keys
-	let catagory_selected=null;
+	
 
 	$w("#catagoriesReapeater").onItemReady(($item, itemData, index) => {
 		$item("#catagoryBox").style.backgroundColor= itemColors.defualt
+		
 		$item("#catagoryContainer").onClick(async () => {
-			$w("#catagoriesReapeater").forItems([catagory_selected?._id],($item, itemData)=>{
-				$item("#catagoryBox").style.backgroundColor= itemColors.defualt
-				console.log(`previously chose ${itemData.title}`)
-			})
-			$item("#catagoryBox").style.backgroundColor= itemColors.active
-			catagory_selected = itemData
+			if(catagory_selected?._id != itemData._id){
+				$w("#catagoriesReapeater").forItems([catagory_selected?._id],($item, itemData)=>{
+					$item("#catagoryBox").style.backgroundColor= itemColors.defualt
+					// console.log(`previously chose ${itemData.title}`)
+				})
+					
+				$item("#catagoryBox").style.backgroundColor= itemColors.active
+				catagory_selected = itemData
 			
-
-			$w('#RecommendationsDataset').setFilter(wixData.filter().eq('catagory',itemData._id))
+				update_filter()
+			}
 		})
+		
 	})
 		/*
 	$w("#catagoriesReapeater").onItemReady(($item, itemData, index) => {
