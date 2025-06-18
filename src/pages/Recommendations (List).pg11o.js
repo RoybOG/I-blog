@@ -1,7 +1,7 @@
 import wixData from "wix-data";
 
 const itemColors = {defualt: "#F6EBE4", "active":"#eeb591"}
-
+const buttonIcons = {"close":"wix:vector://v1/11062b_e457b873ae5046a0bb21aedc8db8aef2.svg/", "open":"wix:vector://v1/11062b_c66d2a059af242d7a4621c0f23dd8fa2.svg/"}
 let tags_selected = new Map(); //chose a map over a normal object becuase its more optimized for frequent removal of keys
 let catagory_selected=null;
 
@@ -25,23 +25,18 @@ function update_filter(){
 }
 
 
-function handleTabContent(openTab=false){
-	const tabContent = $w("#searchtabs").currentTab.children[0];
+function handleTabContent(tabObj, toggleButtonObj, openTab=false){
+	const tabContent = tabObj.currentTab.children[0];
 	if(openTab){
 		tabContent.expand();
+		toggleButtonObj.icon = buttonIcons.close
 	}else{
+		toggleButtonObj.icon = buttonIcons.open
 		tabContent.collapse();
 	}
 }
 
-function toggleTabContent(){
-	const tabContent = $w("#searchtabs").currentTab.children[0];
-	if(tabContent.collapsed){
-		tabContent.expand();
-	}else{
-		tabContent.collapse();
-	}
-}
+
 
 
 function resetCategory(new_category_data=null){
@@ -64,16 +59,19 @@ function resetTags(){
 $w.onReady(function () {
 
 	//-------------------- tabs setup ------------------------
-
-	$w("#searchtabs").onChange((e)=>{
-		handleTabContent(true)
+	const searchTabs = $w("#searchtabs")
+	const toggleButton = $w('#buttonToggle')
+	searchTabs.onChange((e)=>{
+		handleTabContent(searchTabs,toggleButton,true)
 	})
-	$w('#buttonToggle').onClick(()=>{
-		toggleTabContent()
+	toggleButton.onClick((event)=>{
+		console.log(event.target.icon)
+		const tabContent = searchTabs.currentTab.children[0];
+		handleTabContent(searchTabs,toggleButton,tabContent.collapsed)
 		
 	})
 
-	handleTabContent(false) //collapsed by defualt
+	handleTabContent(searchTabs,toggleButton,false) //collapsed by defualt
 
 
 
